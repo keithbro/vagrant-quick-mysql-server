@@ -10,8 +10,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 3306, host: 3306
 
   config.vm.provision :shell do |shell|
-    shell.inline = "mkdir -p /etc/puppet/modules;
-                    puppet module install puppetlabs/mysql"
+    shell.inline = 'INSTALLED=$(puppet module list | grep puppetlabs-mysql | wc -l)
+                    if [ "$INSTALLED" == 0 ]
+                    then
+                      mkdir -p /etc/puppet/modules;
+                      puppet module install puppetlabs/mysql
+                    fi'
   end
 
   config.vm.provision "puppet"
